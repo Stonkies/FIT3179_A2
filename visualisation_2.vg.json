@@ -1,0 +1,76 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "description": "Line chart showing passenger trips and load factor for the Melbourne-Sydney route using Year and Month_Num fields.",
+    "vconcat": [
+        {
+            "width": 800,
+            "height": 300,
+            "data": {
+                "url": "https://raw.githubusercontent.com/Stonkies/FIT3179_A2/refs/heads/main/route_data_clean.csv",  
+                "format": {"type": "csv"}
+            },
+            "transform": [
+                {
+                    "filter": "datum.City1 == 'MELBOURNE' && datum.City2 == 'SYDNEY' || datum.City1 == 'SYDNEY' && datum.City2 == 'MELBOURNE'"
+                },
+                {
+                    "calculate": "datetime(datum.Year, datum.Month_num - 1, 1)", 
+                    "as": "Parsed_Month"
+                }
+            ],
+            "mark": "line",
+            "encoding": {
+                "x": {
+                    "field": "Parsed_Month", 
+                    "type": "temporal", 
+                    "title": "Month"
+                },
+                "y": {
+                    "field": "Passenger_Trips", 
+                    "type": "quantitative",
+                    "title": "Passenger Trips"
+                },
+                "color": {"value": "steelblue"},
+                "tooltip": [
+                    {"field": "Parsed_Month", "type": "temporal", "title": "Date", "format": "%Y-%m"},
+                    {"field": "Passenger_Trips", "type": "quantitative", "title": "Trips", "format": ","}
+                ]
+            }
+        },
+        {
+            "width": 800,
+            "height": 300,
+            "data": {
+                "url": "https://raw.githubusercontent.com/Stonkies/FIT3179_A2/refs/heads/main/route_data_clean.csv", 
+                "format": {"type": "csv"}
+            },
+            "transform": [
+                {
+                    "filter": "datum.City1 == 'MELBOURNE' && datum.City2 == 'SYDNEY' || datum.City1 == 'SYDNEY' && datum.City2 == 'MELBOURNE'"
+                },
+                {
+                    "calculate": "datetime(datum.Year, datum.Month_num - 1, 1)", 
+                    "as": "Parsed_Month"
+                }
+            ],
+            "mark": "line",
+            "encoding": {
+                "x": {
+                    "field": "Parsed_Month", 
+                    "type": "temporal", 
+                    "title": "Month"
+                },
+                "y": {
+                    "field": "Passenger_Load_Factor", 
+                    "type": "quantitative",
+                    "title": "Passenger Load Factor (%)"
+                },
+                "color": {"value": "orange"},
+                "tooltip": [
+                    {"field": "Parsed_Month", "type": "temporal", "title": "Date", "format": "%Y-%m"},
+                    {"field": "Passenger_Load_Factor", "type": "quantitative", "title": "Load Factor (%)", "format": ".1f"}
+                ]
+            }
+        }
+    ]
+}

@@ -1,0 +1,89 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "description": "Heat map showing the number of passengers to/from a selected city by month and year.",
+    "data": {
+        "url": "https://raw.githubusercontent.com/Stonkies/FIT3179_A2/main/route_data_clean.csv",  
+        "format": {"type": "csv"}
+    },
+    "params": [
+        {
+            "name": "CitySelection",
+            "value": "MELBOURNE", 
+            "bind": {
+                "input": "select",
+                "options": [
+                    "ADELAIDE", "ALICE SPRINGS", "ALBURY", "BRISBANE", "CANBERRA", "DARWIN", 
+                    "BROOME", "GOLD COAST", "MELBOURNE", "COFFS HARBOUR", "PERTH", "SYDNEY", 
+                    "DEVONPORT", "CAIRNS", "DUBBO", "MACKAY", "PROSERPINE", "HOBART", 
+                    "ROCKHAMPTON", "KALGOORLIE", "TOWNSVILLE", "KARRATHA", "BURNIE", 
+                    "LAUNCESTON", "MILDURA", "NEWCASTLE", "WAGGA WAGGA", "SUNSHINE COAST", 
+                    "PORT LINCOLN", "HAMILTON ISLAND", "PORT HEDLAND", "BALLINA", "HERVEY BAY", 
+                    "NEWMAN", "PORT MACQUARIE", "GLADSTONE", "EMERALD", "MOUNT ISA", 
+                    "AYERS ROCK", "MORANBAH", "GERALDTON", "BUNDABERG", "ARMIDALE", "TAMWORTH"
+                ],
+                "name": "City "
+            }
+        }
+    ],
+    "transform": [
+        {
+            "fold": ["City1", "City2"],
+            "as": ["CityRole", "City"]
+        },
+        {
+            "filter": "datum.City != null"
+        },
+        {   
+            "filter": "datum.City == CitySelection"
+        },
+        {
+            "calculate": "datetime(datum.Year, datum.Month_num - 1, 1)",
+            "as": "Date"
+        }
+    ],
+    "mark": "rect",
+    "width": 800,
+    "height": 700,
+    "encoding": {
+        "x": {
+            "field": "Date",
+            "type": "ordinal",
+            "timeUnit": "month",
+            "title": "Month",
+            "axis": {"labelAngle": 0, "format": "%b"}
+        },
+        "y": {
+            "field": "Date",
+            "type": "ordinal",
+            "timeUnit": "year",
+            "title": "Year"
+        },
+        "color": {
+            "aggregate": "sum",
+            "field": "Passenger_Trips",
+            "type": "quantitative",
+            "title": "Total Passengers",
+            "scale": {
+                "type": "linear",
+                "range": ["blue", "white", "red"]
+            }
+        },
+        "tooltip": [
+            {"field": "Year", "type": "ordinal", "title": "Year"},
+            {
+                "field": "Date",
+                "type": "ordinal",
+                "timeUnit": "month",
+                "title": "Month",
+                "format": "%B"
+            },
+            {
+                "aggregate": "sum",
+                "field": "Passenger_Trips",
+                "type": "quantitative",
+                "title": "Total Passengers",
+                "format": ","
+            }
+        ]
+    }
+}

@@ -1,0 +1,64 @@
+/* Global Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+h1 {
+    color: #0056b3;
+    text-align: center;
+    margin: 20px 0;
+    font-size: 36px;
+}
+
+h2 {
+    color: #007bff;
+    text-align: left;
+    margin: 20px 20px;
+    font-size: 28px;
+}
+
+div {
+    margin: 20px auto;
+    width: 90%;
+    max-width: 1200px;
+}
+
+/* Chart containers */
+#map, #melsyd_route, #heatmap {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 40px;
+}
+
+/* Footer styling */
+footer {
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 28px;
+    }
+    
+    h2 {
+        font-size: 24px;
+    }
+
+    div {
+        width: 100%;
+    }
+}
