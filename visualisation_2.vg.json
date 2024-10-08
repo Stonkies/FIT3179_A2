@@ -3,7 +3,7 @@
     "description": "Line chart showing passenger trips and load factor for the Melbourne-Sydney route using Year and Month_Num fields.",
     "vconcat": [
         {
-            "width": 800,
+            "width": 600,
             "height": 300,
             "data": {
                 "url": "https://raw.githubusercontent.com/Stonkies/FIT3179_A2/refs/heads/main/route_data_clean.csv",  
@@ -38,7 +38,7 @@
             }
         },
         {
-            "width": 800,
+            "width": 600,
             "height": 300,
             "data": {
                 "url": "https://raw.githubusercontent.com/Stonkies/FIT3179_A2/refs/heads/main/route_data_clean.csv", 

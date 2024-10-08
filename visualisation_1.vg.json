@@ -3,8 +3,8 @@
     "description": "Map showing routes between cities with ribbons proportional to log(sum(passenger_trips)) and filterable by date range.",
     "vconcat": [
         {
-            "width": 800,
-            "height": 500,
+            "width": 600,
+            "height": 400,
             "projection": {
                 "type": "equirectangular"
             },
@@ -93,7 +93,11 @@
                         "color": {
                             "field": "sum_passenger_trips",
                             "type": "quantitative",
-                            "title": "Total Passenger Trips"
+                            "title": "Total Passengers",
+                            "scale": {
+                                "type": "linear",
+                                "range": ["blue", "orange", "red"]
+                            }
                         },
                         "tooltip": [
                             {
@@ -109,7 +113,7 @@
                             {
                                 "field": "sum_passenger_trips",
                                 "type": "quantitative",
-                                "title": "Total Passenger Trips",
+                                "title": "Total Passengers",
                                 "format": ","
                             }
                         ]
@@ -123,6 +127,15 @@
                         }
                     },
                     "transform": [
+                        {
+                            "calculate": "datetime(datum.Year, datum.Month_num - 1, 1)", 
+                            "as": "Date"
+                        },
+                        {
+                            "filter": {
+                              "selection": "brush"
+                            }
+                        },
                         {
                             "groupby": [
                                 "City1",
@@ -158,59 +171,32 @@
                             "filter": "datum.rank == 1"
                         },
                         {
-                            "calculate": "parseFloat(datum.City1_Long)",
-                            "as": "City1_Long_numeric"
-                        },
-                        {
-                            "calculate": "parseFloat(datum.City2_Long)",
-                            "as": "City2_Long_numeric"
-                        },
-                        {
-                            "calculate": "parseFloat(datum.City1_Lat)",
-                            "as": "City1_Lat_numeric"
-                        },
-                        {
-                            "calculate": "parseFloat(datum.City2_Lat)",
-                            "as": "City2_Lat_numeric"
-                        },
-                        {
-                            "calculate": "(datum.City1_Long_numeric + datum.City2_Long_numeric) / 2",
+                            "calculate": "(parseFloat(datum.City1_Long) + parseFloat(datum.City2_Long)) / 2",
                             "as": "midpoint_long"
                         },
                         {
-                            "calculate": "(datum.City1_Lat_numeric + datum.City2_Lat_numeric) / 2",
+                            "calculate": "(parseFloat(datum.City1_Lat) + parseFloat(datum.City2_Lat)) / 2",
                             "as": "midpoint_lat"
                         },
                         {
-                            "calculate": "'Busiest Route: ' + datum.City1 + ' to / from ' + datum.City2",
+                            "calculate": "'Busiest Route: ' + datum.City1 + ' to / from ' + datum.City2 + '. Trips: ' + format(datum.sum_passenger_trips, ',')",
                             "as": "busiest_route_label"
                         }
                     ],
                     "mark": {
                         "type": "text",
-                        "fontSize": 11,
+                        "fontSize": 12,
                         "font": "Arial",
                         "align": "left",
-                        "dy": 10,
-                        "dx": 10,
                         "fontWeight": "bold",
-                        "color": "red"
+                        "color": "black"
                     },
                     "encoding": {
-                        "longitude": {
-                            "field": "midpoint_long",
-                            "type": "quantitative"
-                        },
-                        "latitude": {
-                            "field": "midpoint_lat",
-                            "type": "quantitative"
-                        },
+                        "x": {"value": 10},
+                        "y": {"value": 10},
                         "text": {
                             "field": "busiest_route_label",
                             "type": "nominal"
-                        },
-                        "color": {
-                            "value": "red"
                         }
                     }
                 },
@@ -251,8 +237,8 @@
             ]
         },
         {
-            "width": 1000,
-            "height": 100,
+            "width": 600,
+            "height": 200,
             "data": {
                 "url": "https://raw.githubusercontent.com/Stonkies/FIT3179_A2/refs/heads/main/route_data_clean.csv",
                 "format": {
@@ -271,12 +257,15 @@
                     "field": "Date",
                     "type": "temporal",
                     "axis": {
-                        "title": "Date"
+                        "title": "Date Filter - Highlight Date Region to change Map Display"
                     }
                 },
                 "y": {
                     "aggregate": "count",
-                    "type": "quantitative"
+                    "type": "quantitative",
+                    "axis": {
+                        "title": "Count of Unique Routes"
+                    }
                 },
                 "opacity": {
                     "condition": {

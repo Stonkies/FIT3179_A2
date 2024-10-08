@@ -12,14 +12,14 @@
             "bind": {
                 "input": "select",
                 "options": [
-                    "ADELAIDE", "ALICE SPRINGS", "ALBURY", "BRISBANE", "CANBERRA", "DARWIN", 
-                    "BROOME", "GOLD COAST", "MELBOURNE", "COFFS HARBOUR", "PERTH", "SYDNEY", 
-                    "DEVONPORT", "CAIRNS", "DUBBO", "MACKAY", "PROSERPINE", "HOBART", 
-                    "ROCKHAMPTON", "KALGOORLIE", "TOWNSVILLE", "KARRATHA", "BURNIE", 
-                    "LAUNCESTON", "MILDURA", "NEWCASTLE", "WAGGA WAGGA", "SUNSHINE COAST", 
-                    "PORT LINCOLN", "HAMILTON ISLAND", "PORT HEDLAND", "BALLINA", "HERVEY BAY", 
-                    "NEWMAN", "PORT MACQUARIE", "GLADSTONE", "EMERALD", "MOUNT ISA", 
-                    "AYERS ROCK", "MORANBAH", "GERALDTON", "BUNDABERG", "ARMIDALE", "TAMWORTH"
+    "ADELAIDE", "ALBURY", "ALICE SPRINGS", "ARMIDALE", "AYERS ROCK", "BALLINA", 
+    "BRISBANE", "BROOME", "BUNDABERG", "BURNIE", "CAIRNS", "CANBERRA", 
+    "COFFS HARBOUR", "DARWIN", "DEVONPORT", "DUBBO", "EMERALD", "GERALDTON", 
+    "GLADSTONE", "GOLD COAST", "HAMILTON ISLAND", "HERVEY BAY", "HOBART", 
+    "KALGOORLIE", "KARRATHA", "LAUNCESTON", "MACKAY", "MELBOURNE", "MILDURA", 
+    "MORANBAH", "MOUNT ISA", "NEWMAN", "NEWCASTLE", "PERTH", "PORT HEDLAND", 
+    "PORT LINCOLN", "PORT MACQUARIE", "PROSERPINE", "ROCKHAMPTON", "SUNSHINE COAST", 
+    "SYDNEY", "TAMWORTH", "TOWNSVILLE", "WAGGA WAGGA"
                 ],
                 "name": "City "
             }
@@ -42,8 +42,8 @@
         }
     ],
     "mark": "rect",
-    "width": 800,
-    "height": 700,
+    "width": 600,
+    "height": 600,
     "encoding": {
         "x": {
             "field": "Date",
@@ -65,7 +65,7 @@
             "title": "Total Passengers",
             "scale": {
                 "type": "linear",
-                "range": ["blue", "white", "red"]
+                "range": ["blue", "orange", "red"]
             }
         },
         "tooltip": [
