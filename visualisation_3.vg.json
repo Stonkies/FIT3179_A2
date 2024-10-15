@@ -65,7 +65,7 @@
             "title": "Total Passengers",
             "scale": {
                 "type": "linear",
-                "range": ["blue", "orange", "red"]
+                "range": ["lightblue", "green", "orange"]
             }
         },
         "tooltip": [

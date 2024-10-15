@@ -2,290 +2,408 @@
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
     "description": "Map showing routes between cities with ribbons proportional to log(sum(passenger_trips)) and filterable by date range.",
     "vconcat": [
-        {
-            "width": 600,
-            "height": 400,
-            "projection": {
-                "type": "equirectangular"
-            },
-            "layer": [
-                {
-                    "data": {
-                        "url": "https://raw.githubusercontent.com/Stonkies/FIT3179_A2/refs/heads/main/australian_states.json",
-                        "format": {
-                            "type": "topojson",
-                            "feature": "STE_2016_AUST"
-                        }
-                    },
-                    "mark": {
-                        "type": "geoshape",
-                        "fill": "lightgray",
-                        "opacity": 0.6,
-                        "stroke": "black"
-                    }
-                },
-                {
-                    "data": {
-                        "url": "https://raw.githubusercontent.com/Stonkies/FIT3179_A2/refs/heads/main/route_data_clean.csv",
-                        "format": {
-                            "type": "csv"
-                        }
-                    },
-                    "transform": [
-                        {
-                            "calculate": "datetime(datum.Year, datum.Month_num - 1, 1)", 
-                            "as": "Date"
-                        },
-                        {
-                            "filter": {
-                                "selection": "brush"
-                            }
-                        },
-                        {
-                            "groupby": [
-                                "City1",
-                                "City2",
-                                "City1_Long",
-                                "City1_Lat",
-                                "City2_Long",
-                                "City2_Lat"
-                            ],
-                            "aggregate": [
-                                {
-                                    "op": "sum",
-                                    "field": "Passenger_Trips",
-                                    "as": "sum_passenger_trips"
-                                }
-                            ]
-                        },
-                        {
-                            "calculate": "log(datum.sum_passenger_trips)",
-                            "as": "log_sum_passenger_trips"
-                        }
-                    ],
-                    "mark": {
-                        "type": "rule",
-                        "opacity": 0.7
-                    },
-                    "encoding": {
-                        "longitude": {
-                            "field": "City1_Long",
-                            "type": "quantitative"
-                        },
-                        "latitude": {
-                            "field": "City1_Lat",
-                            "type": "quantitative"
-                        },
-                        "longitude2": {
-                            "field": "City2_Long",
-                            "type": "quantitative"
-                        },
-                        "latitude2": {
-                            "field": "City2_Lat",
-                            "type": "quantitative"
-                        },
-                        "size": {
-                            "field": "log_sum_passenger_trips",
-                            "type": "quantitative",
-                            "title": "Passenger Trips (log of sum)",
-                            "legend": null
-                        },
-                        "color": {
-                            "field": "sum_passenger_trips",
-                            "type": "quantitative",
-                            "title": "Total Passengers",
-                            "scale": {
-                                "type": "linear",
-                                "range": ["blue", "orange", "red"]
-                            }
-                        },
-                        "tooltip": [
-                            {
-                                "field": "City1",
-                                "type": "nominal",
-                                "title": "City 1"
-                            },
-                            {
-                                "field": "City2",
-                                "type": "nominal",
-                                "title": "City 2"
-                            },
-                            {
-                                "field": "sum_passenger_trips",
-                                "type": "quantitative",
-                                "title": "Total Passengers",
-                                "format": ","
-                            }
-                        ]
-                    }
-                },
-                {
-                    "data": {
-                        "url": "https://raw.githubusercontent.com/Stonkies/FIT3179_A2/refs/heads/main/route_data_clean.csv",
-                        "format": {
-                            "type": "csv"
-                        }
-                    },
-                    "transform": [
-                        {
-                            "calculate": "datetime(datum.Year, datum.Month_num - 1, 1)", 
-                            "as": "Date"
-                        },
-                        {
-                            "filter": {
-                              "selection": "brush"
-                            }
-                        },
-                        {
-                            "groupby": [
-                                "City1",
-                                "City2",
-                                "City1_Long",
-                                "City1_Lat",
-                                "City2_Long",
-                                "City2_Lat"
-                            ],
-                            "aggregate": [
-                                {
-                                    "op": "sum",
-                                    "field": "Passenger_Trips",
-                                    "as": "sum_passenger_trips"
-                                }
-                            ]
-                        },
-                        {
-                            "window": [
-                                {
-                                    "op": "rank",
-                                    "as": "rank"
-                                }
-                            ],
-                            "sort": [
-                                {
-                                    "field": "sum_passenger_trips",
-                                    "order": "descending"
-                                }
-                            ]
-                        },
-                        {
-                            "filter": "datum.rank == 1"
-                        },
-                        {
-                            "calculate": "(parseFloat(datum.City1_Long) + parseFloat(datum.City2_Long)) / 2",
-                            "as": "midpoint_long"
-                        },
-                        {
-                            "calculate": "(parseFloat(datum.City1_Lat) + parseFloat(datum.City2_Lat)) / 2",
-                            "as": "midpoint_lat"
-                        },
-                        {
-                            "calculate": "'Busiest Route: ' + datum.City1 + ' to / from ' + datum.City2 + '. Trips: ' + format(datum.sum_passenger_trips, ',')",
-                            "as": "busiest_route_label"
-                        }
-                    ],
-                    "mark": {
-                        "type": "text",
-                        "fontSize": 12,
-                        "font": "Arial",
-                        "align": "left",
-                        "fontWeight": "bold",
-                        "color": "black"
-                    },
-                    "encoding": {
-                        "x": {"value": 10},
-                        "y": {"value": 10},
-                        "text": {
-                            "field": "busiest_route_label",
-                            "type": "nominal"
-                        }
-                    }
-                },
-                {
-                    "data": {
-                        "url": "https://raw.githubusercontent.com/Stonkies/FIT3179_A2/refs/heads/main/region_centroid_labels.csv",
-                        "format": {
-                            "type": "csv"
-                        }
-                    },
-                    "transform": [
-                        {
-                            "filter": "datum.Region_Type === 'State'"
-                        }
-                    ],
-                    "mark": {
-                        "type": "text",
-                        "fontSize": 10,
-                        "dx": -40,
-                        "dy": 0,
-                        "align": "left"
-                    },
-                    "encoding": {
-                        "longitude": {
-                            "field": "Longitude",
-                            "type": "quantitative"
-                        },
-                        "latitude": {
-                            "field": "Latitude",
-                            "type": "quantitative"
-                        },
-                        "text": {
-                            "field": "Region",
-                            "type": "nominal"
-                        }
-                    }
-                }
-            ]
+      {
+        "width": 1000,
+        "height": 900,
+        "projection": {
+          "type": "equirectangular",
+          "scale": 1380,
+          "translate": [-2710, -180]
         },
-        {
-            "width": 600,
-            "height": 200,
+        "layer": [
+          {
             "data": {
-                "url": "https://raw.githubusercontent.com/Stonkies/FIT3179_A2/refs/heads/main/route_data_clean.csv",
-                "format": {
-                    "type": "csv"
-                }
+              "url": "https://raw.githubusercontent.com/Stonkies/FIT3179_A2/refs/heads/main/australian_states.json",
+              "format": {
+                "type": "topojson",
+                "feature": "STE_2016_AUST"
+              }
+            },
+            "mark": {
+              "type": "geoshape",
+              "fill": "lightgray",
+              "opacity": 0.6,
+              "stroke": "black"
+            }
+          },
+          {
+            "data": {
+              "url": "https://raw.githubusercontent.com/Stonkies/FIT3179_A2/refs/heads/main/route_data_clean.csv",
+              "format": {
+                "type": "csv"
+              }
             },
             "transform": [
-                {
-                    "calculate": "datetime(datum.Year, datum.Month_num - 1, 1)", 
-                    "as": "Date"
+              {
+                "calculate": "datetime(datum.Year, datum.Month_num - 1, 1)", 
+                "as": "Date"
+              },
+              {
+                "filter": {
+                  "selection": "brush"
                 }
+              },
+              {
+                "groupby": [
+                  "City1",
+                  "City2",
+                  "City1_Long",
+                  "City1_Lat",
+                  "City2_Long",
+                  "City2_Lat"
+                ],
+                "aggregate": [
+                  {
+                    "op": "sum",
+                    "field": "Passenger_Trips",
+                    "as": "sum_passenger_trips"
+                  }
+                ]
+              },
+              {
+                "calculate": "log(datum.sum_passenger_trips)",
+                "as": "log_sum_passenger_trips"
+              }
             ],
-            "mark": "line",
-            "encoding": {
-                "x": {
-                    "field": "Date",
-                    "type": "temporal",
-                    "axis": {
-                        "title": "Date Filter - Highlight Date Region to change Map Display"
-                    }
-                },
-                "y": {
-                    "aggregate": "count",
-                    "type": "quantitative",
-                    "axis": {
-                        "title": "Count of Unique Routes"
-                    }
-                },
-                "opacity": {
-                    "condition": {
-                        "selection": "brush",
-                        "value": 1
-                    },
-                    "value": 0.7
-                }
+            "mark": {
+              "type": "rule",
+              "opacity": 0.7
             },
-            "selection": {
-                "brush": {
-                    "type": "interval",
-                    "encodings": [
-                        "x"
-                    ]
+            "encoding": {
+              "longitude": {
+                "field": "City1_Long",
+                "type": "quantitative"
+              },
+              "latitude": {
+                "field": "City1_Lat",
+                "type": "quantitative"
+              },
+              "longitude2": {
+                "field": "City2_Long",
+                "type": "quantitative"
+              },
+              "latitude2": {
+                "field": "City2_Lat",
+                "type": "quantitative"
+              },
+              "size": {
+                "field": "log_sum_passenger_trips",
+                "type": "quantitative",
+                "title": "Passenger Trips (log of sum)",
+                "legend": null
+              },
+              "color": {
+                "field": "sum_passenger_trips",
+                "type": "quantitative",
+                "title": "Total Passengers",
+                "scale": {
+                  "type": "linear",
+                  "range": ["lightblue", "green", "orange"]
                 }
+              },
+              "tooltip": [
+                {
+                  "field": "City1",
+                  "type": "nominal",
+                  "title": "City 1"
+                },
+                {
+                  "field": "City2",
+                  "type": "nominal",
+                  "title": "City 2"
+                },
+                {
+                  "field": "sum_passenger_trips",
+                  "type": "quantitative",
+                  "title": "Total Passengers",
+                  "format": ","
+                }
+              ]
             }
+          },
+          {
+            "data": {
+              "url": "https://raw.githubusercontent.com/Stonkies/FIT3179_A2/refs/heads/main/route_data_clean.csv",
+              "format": {
+                "type": "csv"
+              }
+            },
+            "transform": [
+              {
+                "calculate": "datetime(datum.Year, datum.Month_num - 1, 1)", 
+                "as": "Date"
+              },
+              {
+                "filter": {
+                  "selection": "brush"
+                }
+              },
+              {
+                "groupby": [
+                  "City1",
+                  "City2",
+                  "City1_Long",
+                  "City1_Lat",
+                  "City2_Long",
+                  "City2_Lat"
+                ],
+                "aggregate": [
+                  {
+                    "op": "sum",
+                    "field": "Passenger_Trips",
+                    "as": "sum_passenger_trips"
+                  }
+                ]
+              },
+              {
+                "window": [
+                  {
+                    "op": "rank",
+                    "as": "rank"
+                  }
+                ],
+                "sort": [
+                  {
+                    "field": "sum_passenger_trips",
+                    "order": "descending"
+                  }
+                ]
+              },
+              {
+                "filter": "datum.rank == 1"
+              },
+              {
+                "calculate": "(parseFloat(datum.City1_Long) + parseFloat(datum.City2_Long)) / 2",
+                "as": "midpoint_long"
+              },
+              {
+                "calculate": "(parseFloat(datum.City1_Lat) + parseFloat(datum.City2_Lat)) / 2",
+                "as": "midpoint_lat"
+              },
+              {
+                "calculate": "'Busiest Route: ' + datum.City1 + ' to / from ' + datum.City2 + '. Trips: ' + format(datum.sum_passenger_trips, ',')",
+                "as": "busiest_route_label"
+              }
+            ],
+            "mark": {
+              "type": "text",
+              "fontSize": 24,
+              "font": "Arial",
+              "align": "left",
+              "fontWeight": "bold",
+              "color": "black"
+            },
+            "encoding": {
+              "x": {"value": 10},
+              "y": {"value": 20},
+              "text": {
+                "field": "busiest_route_label",
+                "type": "nominal"
+              }
+            }
+          },
+          {
+            "data": {
+              "url": "https://raw.githubusercontent.com/Stonkies/FIT3179_A2/refs/heads/main/route_data_clean.csv",
+              "format": {
+                "type": "csv"
+              }
+            },
+            "transform": [
+              {
+                "calculate": "datetime(datum.Year, datum.Month_num - 1, 1)", 
+                "as": "Date"
+              },
+              {
+                "filter": {
+                  "selection": "brush"
+                }
+              },
+              {
+                "aggregate": [
+                  {
+                    "op": "min",
+                    "field": "Date",
+                    "as": "min_date"
+                  },
+                  {
+                    "op": "max",
+                    "field": "Date",
+                    "as": "max_date"
+                  }
+                ]
+              },
+              {
+                "calculate": "'Date range selected: ' + timeFormat(datum.min_date, '%d/%m/%Y') + ' to ' + timeFormat(datum.max_date, '%d/%m/%Y')",
+                "as": "date_range_label"
+              }
+            ],
+            "mark": {
+              "type": "text",
+              "fontSize": 18,
+              "font": "Arial",
+              "align": "left",
+              "fontWeight": "normal",
+              "color": "black"
+            },
+            "encoding": {
+              "x": {"value": 10},
+              "y": {"value": 50},
+              "text": {
+                "field": "date_range_label",
+                "type": "nominal"
+              }
+            }
+          },
+          {
+            "data": {
+              "url": "https://raw.githubusercontent.com/Stonkies/FIT3179_A2/refs/heads/main/region_centroid_labels.csv",
+              "format": {
+                "type": "csv"
+              }
+            },
+            "transform": [
+              {
+                "filter": "datum.Region_Type === 'State'"
+              }
+            ],
+            "mark": {
+              "type": "text",
+              "fontSize": 14,
+              "dx": -40,
+              "dy": 0,
+              "align": "left"
+            },
+            "encoding": {
+              "longitude": {
+                "field": "Longitude",
+                "type": "quantitative"
+              },
+              "latitude": {
+                "field": "Latitude",
+                "type": "quantitative"
+              },
+              "text": {
+                "field": "Region",
+                "type": "nominal"
+              }
+            }
+          },
+          {
+            "data": {
+              "url": "https://raw.githubusercontent.com/Stonkies/FIT3179_A2/refs/heads/main/city_summary_data.csv",
+              "format": {
+                "type": "csv"
+              }
+            },
+            "mark": {
+              "type": "circle",
+              "filled": true,
+              "opacity": 1,
+              "color": "black",
+              "size": 30
+            },
+            "encoding": {
+              "longitude": {
+                "field": "City_Long",
+                "type": "quantitative"
+              },
+              "latitude": {
+                "field": "City_Lat",
+                "type": "quantitative"
+              },
+              "tooltip": [
+                {
+                  "field": "City",
+                  "type": "nominal",
+                  "title": "City"
+                }
+              ]
+            }
+          }
+        ],
+        "view": {
+  "clip": true
+}
+      },
+      {
+        "width": 1000,
+        "height": 150, 
+        "data": {
+          "url": "https://raw.githubusercontent.com/Stonkies/FIT3179_A2/refs/heads/main/route_data_clean.csv",
+          "format": {
+            "type": "csv"
+          }
+        },
+        "transform": [
+          {
+            "calculate": "datetime(datum.Year, datum.Month_num - 1, 1)", 
+            "as": "Date"
+          },
+          {
+            "aggregate": [
+              {
+                "op": "count",
+                "as": "unique_routes"
+              }
+            ],
+            "groupby": ["Date"]
+          }
+        ],
+        "mark": {
+          "type": "line",
+          "point": true
+        },
+        "encoding": {
+          "x": {
+            "field": "Date",
+            "type": "temporal",
+            "axis": {
+              "title": "Date Filter - Highlight Date Region to change Map Display"
+            }
+          },
+          "y": {
+            "field": "unique_routes",
+            "type": "quantitative",
+            "axis": {
+              "title": "Count of Unique Routes"
+            }
+          },
+          "tooltip": [
+            {
+              "field": "Date",
+              "type": "temporal",
+              "title": "Date",
+              "format": "%B %Y"
+            },
+            {
+              "field": "unique_routes",
+              "type": "quantitative",
+              "title": "Unique Routes",
+              "format": ","
+            }
+          ],
+          "color": {
+            "value": "#007bff"
+          },
+          "opacity": {
+            "condition": {
+              "selection": "brush",
+              "value": 1
+            },
+            "value": 0.7
+          }
+        },
+        "selection": {
+          "brush": {
+            "type": "interval",
+            "encodings": ["x"]
+          }
         }
+      }
     ],
     "view": {
-        "stroke": "transparent"
+      "stroke": "transparent"
     }
-}
+  }
+  
